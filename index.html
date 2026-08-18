@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de CAC, LTV & FinOps de IA | Aeon Project 360</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --border-color: rgba(56, 189, 248, 0.2);
+            --accent-cyan: #38bdf8;
+            --accent-purple: #8b5cf6;
+            --accent-gold: #eab308;
+            --text-color: #f8fafc;
+            --muted-text: #94a3b8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background: var(--bg-color); color: var(--text-color); min-height: 100vh; padding: 2rem; display: flex; flex-direction: column; align-items: center; }
+        .container { max-width: 900px; width: 100%; }
+        header { text-align: center; margin-bottom: 2.5rem; }
+        h1 { font-size: 2.2rem; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 0.5rem; }
+        p.subtitle { color: var(--muted-text); font-size: 1rem; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+        @media (max-width: 768px) { .grid { grid-template-columns: 1fr; } }
+        .card { background: var(--card-bg); backdrop-filter: blur(12px); border: 1px solid var(--border-color); border-radius: 16px; padding: 1.5rem; box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
+        .form-group { margin-bottom: 1.2rem; }
+        label { display: block; font-size: 0.85rem; color: var(--muted-text); margin-bottom: 0.4rem; }
+        input[type="number"] { width: 100%; background: #0f172a; border: 1px solid var(--border-color); color: #fff; padding: 0.75rem; border-radius: 8px; font-size: 1rem; outline: none; }
+        input[type="number"]:focus { border-color: var(--accent-cyan); }
+        .metric-box { text-align: center; padding: 1rem; border-radius: 12px; background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border-color); margin-bottom: 1rem; }
+        .metric-value { font-size: 1.8rem; font-weight: 700; color: var(--accent-cyan); }
+        .metric-label { font-size: 0.8rem; color: var(--muted-text); margin-top: 0.2rem; }
+        .badge { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; margin-top: 0.5rem; }
+        .badge-good { background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4); }
+        .badge-warning { background: rgba(234, 179, 8, 0.2); color: #fde047; border: 1px solid rgba(234, 179, 8, 0.4); }
+        .cta-btn { display: block; width: 100%; text-align: center; background: linear-gradient(135deg, #25D366, #128C7E); color: white; text-decoration: none; padding: 1rem; border-radius: 12px; font-weight: 600; margin-top: 1.5rem; box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3); transition: transform 0.2s; }
+        .cta-btn:hover { transform: translateY(-2px); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Calculadora de CAC, LTV & FinOps de IA</h1>
+            <p class="subtitle">Aeon Project 360 — Simule a saúde financeira do seu funil e o impacto dos custos de IA</p>
+        </header>
+
+        <div class="grid">
+            <div class="card">
+                <h3 style="margin-bottom: 1.2rem; color: var(--accent-cyan);">📥 Dados do Seu Negócio</h3>
+                <div class="form-group">
+                    <label>Investimento Mensal em Anúncios (R$)</label>
+                    <input type="number" id="adSpend" value="5000" oninput="calculate()">
+                </div>
+                <div class="form-group">
+                    <label>Novos Clientes Adquiridos / Mês</label>
+                    <input type="number" id="newClients" value="25" oninput="calculate()">
+                </div>
+                <div class="form-group">
+                    <label>Ticket Médio Mensal por Cliente (R$)</label>
+                    <input type="number" id="ticket" value="350" oninput="calculate()">
+                </div>
+                <div class="form-group">
+                    <label>Tempo Médio de Retenção (Meses)</label>
+                    <input type="number" id="retention" value="12" oninput="calculate()">
+                </div>
+                <div class="form-group">
+                    <label>Custo Mensal de APIs de IA & Automação (R$)</label>
+                    <input type="number" id="aiCost" value="300" oninput="calculate()">
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 style="margin-bottom: 1.2rem; color: var(--accent-purple);">📊 Diagnóstico de Retorno</h3>
+                <div class="metric-box">
+                    <div class="metric-value" id="cacVal">R$ 200,00</div>
+                    <div class="metric-label">CAC (Custo de Aquisição de Cliente)</div>
+                </div>
+                <div class="metric-box">
+                    <div class="metric-value" id="ltvVal" style="color: var(--accent-purple);">R$ 4.200,00</div>
+                    <div class="metric-label">LTV (Lifetime Value / Valor Vitalício)</div>
+                </div>
+                <div class="metric-box">
+                    <div class="metric-value" id="ratioVal" style="color: var(--accent-gold);">21,0 x</div>
+                    <div class="metric-label">Razão LTV : CAC</div>
+                    <div id="healthBadge" class="badge badge-good">Saúde Excelente</div>
+                </div>
+                <div class="metric-box">
+                    <div class="metric-value" id="aiRatioVal" style="color: #4ade80;">R$ 12,00</div>
+                    <div class="metric-label">Custo de IA por Cliente Adquirido</div>
+                </div>
+                <a href="https://wa.me/5511999999999?text=Olá!%20Simulei%20minhas%20métricas%20na%20calculadora%20e%20gostaria%20de%20otimizar%20meu%20CAC" target="_blank" class="cta-btn">🚀 Falar com Especialista para Escalar Resultados</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function calculate() {
+            const spend = parseFloat(document.getElementById('adSpend').value) || 0;
+            const clients = parseFloat(document.getElementById('newClients').value) || 1;
+            const ticket = parseFloat(document.getElementById('ticket').value) || 0;
+            const months = parseFloat(document.getElementById('retention').value) || 1;
+            const aiCost = parseFloat(document.getElementById('aiCost').value) || 0;
+
+            const cac = (spend + aiCost) / clients;
+            const ltv = ticket * months;
+            const ratio = ltv / (cac || 1);
+            const aiPerClient = aiCost / clients;
+
+            document.getElementById('cacVal').innerText = 'R$ ' + cac.toFixed(2).replace('.', ',');
+            document.getElementById('ltvVal').innerText = 'R$ ' + ltv.toFixed(2).replace('.', ',');
+            document.getElementById('ratioVal').innerText = ratio.toFixed(1).replace('.', ',') + ' x';
+            document.getElementById('aiRatioVal').innerText = 'R$ ' + aiPerClient.toFixed(2).replace('.', ',');
+
+            const badge = document.getElementById('healthBadge');
+            if (ratio >= 3) {
+                badge.innerText = 'Saúde Excelente (LTV:CAC >= 3)';
+                badge.className = 'badge badge-good';
+            } else if (ratio >= 1.5) {
+                badge.innerText = 'Atenção: Margem Apertada';
+                badge.className = 'badge badge-warning';
+            } else {
+                badge.innerText = 'Risco: Prejuízo no Funil';
+                badge.className = 'badge';
+                badge.style.background = 'rgba(239, 68, 68, 0.2)';
+                badge.style.color = '#f87171';
+            }
+        }
+        calculate();
+    </script>
+</body>
+</html>
